@@ -1,0 +1,57 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vivi.viviarchillecttv">
+
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_WIFI_STATE"
+        android:protectionLevel="normal"
+        android:maxSdkVersion="23"/>
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_NETWORK_STATE"
+        android:protectionLevel="normal"
+        android:maxSdkVersion="23"/>
+    <uses-permission-sdk-23 android:name="android.permission.INTERNET"
+        android:protectionLevel="normal"
+        android:maxSdkVersion="23"/>
+
+
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="true" />
+
+    <application
+        android:name=".ArchillectApplication"
+        android:keepScreenOn="true"
+        android:allowBackup="true"
+        android:icon="@mipmap/archillect_icon_512"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:largeHeap="true"
+        android:theme="@style/Theme.Leanback">
+        <activity
+            android:name="com.vivi.viviarchillecttv.SplashActivity"
+            android:banner="@drawable/archillect_banner"
+            android:icon="@drawable/archillect_banner"
+            android:label="@string/app_name"
+            android:logo="@drawable/archillect_banner"
+            android:screenOrientation="landscape"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.vivi.viviarchillecttv.MainActivity" />
+
+    </application>
+
+</manifest>
