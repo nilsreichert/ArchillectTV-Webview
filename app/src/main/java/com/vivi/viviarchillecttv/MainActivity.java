@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -21,6 +19,7 @@ public class MainActivity extends Activity {
     String url;
 
     Context context;
+    Runnable runnable;
 
     public static boolean Donezo = false;
 
@@ -50,13 +49,10 @@ public class MainActivity extends Activity {
 
         context = this;
 
-        //TODO: Grab WakeLock
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "MyWakelockTag");
         wakeLock.acquire();
-
-
 
         Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
         {
@@ -72,7 +68,7 @@ public class MainActivity extends Activity {
         url = "http://archillect.com/tv";
         backgroundView.loadUrl(url);
 
-        Runnable runnable = new Runnable() {
+        runnable = new Runnable() {
             @Override
             public void run() {
                 if (!Donezo) {
@@ -81,52 +77,55 @@ public class MainActivity extends Activity {
                 }
             }
         };
-
         backgroundView.postDelayed(runnable,7000);
     }
 
 
-
-
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event){
-
-        if(keyCode == KeyEvent.KEYCODE_HOME)
-        {
-            if(wakeLock != null){
-                if(wakeLock.isHeld()){
-                    System.out.println("Wake Lock is Released!");
-                    wakeLock.release();
-                }
-            }
-        } else if(keyCode == KeyEvent.KEYCODE_BACK){
-            if(wakeLock != null){
-                if(wakeLock.isHeld()){
-                    wakeLock.release();
-                }
+    public void onResume() {
+        if(wakeLock != null){
+            if(!wakeLock.isHeld()){
+                wakeLock.acquire();
             }
         }
-
-        return super.onKeyDown(keyCode, event);
+        super.onResume();
     }
 
     @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        //TODO: Release WakeLock
-        System.out.println("On Destroy!");
+    public void onPause() {
+        requestVisibleBehind(true);
         if(wakeLock != null){
             if(wakeLock.isHeld()){
                 wakeLock.release();
             }
         }
+        super.onPause();
+    }
 
+    @Override
+    public void onVisibleBehindCanceled() {
+        if(wakeLock != null){
+            if(wakeLock.isHeld()){
+                wakeLock.release();
+            }
+        }
+        super.onVisibleBehindCanceled();
+    }
+
+    @Override
+    protected void onDestroy(){
+        if(wakeLock != null){
+            if(wakeLock.isHeld()){
+                wakeLock.release();
+            }
+        }
         mTracker.setScreenName("ExitScreen");
         mTracker.send(new HitBuilders.EventBuilder()
                 .setCategory("UX")
                 .setAction("Click")
                 .setLabel("Exit")
                 .build());
+        super.onDestroy();
     }
 
 
